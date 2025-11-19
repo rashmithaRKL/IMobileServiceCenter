@@ -1,0 +1,139 @@
+import { createClient } from '../client'
+import { withRetry, handleSupabaseError } from '../utils/error-handler'
+import type { Database } from '../types'
+import { analyticsService } from './analytics'
+
+type Profile = Database['public']['Tables']['profiles']['Row']
+type ProfileUpdate = Database['public']['Tables']['profiles']['Update']
+
+export interface Customer {
+  id: string
+  name: string
+  email: string
+  phone: string | null
+  whatsapp: string | null
+  joinDate: string
+  totalOrders: number
+  totalSpent: number
+  status: 'Active' | 'Inactive'
+}
+
+export const customersService = {
+  // Get all customers with order statistics
+  async getAll() {
+    return withRetry(async () => {
+      const supabase = createClient()
+      
+      // Get all profiles
+      const { data: profiles, error: profilesError } = await supabase
+        .from('profiles')
+        .select('*')
+        .order('created_at', { ascending: false })
+
+      if (profilesError) throw handleSupabaseError(profilesError)
+
+      // Get orders for statistics
+      const { data: orders, error: ordersError } = await supabase
+        .from('orders')
+        .select('user_id, total, created_at')
+
+      if (ordersError) throw handleSupabaseError(ordersError)
+
+      // Calculate statistics for each customer
+      const customers: Customer[] = await Promise.all(
+        (profiles || []).map(async (profile) => {
+          const userOrders = orders?.filter(o => o.user_id === profile.id) || []
+          const totalOrders = userOrders.length
+          const totalSpent = userOrders.reduce((sum, o) => sum + Number(o.total || 0), 0)
+          const lastOrder = userOrders.length > 0 
+            ? new Date(Math.max(...userOrders.map(o => new Date(o.created_at).getTime())))
+            : null
+          
+          // Customer is active if they have orders in last 90 days
+          const isActive = lastOrder 
+            ? (Date.now() - lastOrder.getTime()) < 90 * 24 * 60 * 60 * 1000
+            : false
+
+          // Get detailed stats if available
+          let stats = null
+          try {
+            stats = await analyticsService.getCustomerStats(profile.id)
+          } catch (err) {
+            // Use calculated values if function fails
+          }
+
+          return {
+            id: profile.id,
+            name: profile.name || profile.email || 'Unknown',
+            email: profile.email || '',
+            phone: null, // Can be added to profiles table
+            whatsapp: profile.whatsapp || null,
+            joinDate: profile.created_at.split('T')[0],
+            totalOrders: stats?.total_orders || totalOrders,
+            totalSpent: Number(stats?.total_spent || totalSpent.toFixed(2)),
+            status: isActive ? 'Active' as const : 'Inactive' as const,
+          }
+        })
+      )
+
+      return customers
+    })
+  },
+
+  // Get single customer
+  async getById(id: string) {
+    return withRetry(async () => {
+      const supabase = createClient()
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', id)
+        .single()
+
+      if (error) throw handleSupabaseError(error)
+
+      // Get customer stats
+      const stats = await analyticsService.getCustomerStats(id)
+
+      return {
+        id: profile.id,
+        name: profile.name || profile.email || 'Unknown',
+        email: profile.email || '',
+        phone: null,
+        whatsapp: profile.whatsapp || null,
+        joinDate: profile.created_at.split('T')[0],
+        totalOrders: stats?.total_orders || 0,
+        totalSpent: Number(stats?.total_spent || 0),
+        status: 'Active' as const,
+      } as Customer
+    })
+  },
+
+  // Update customer profile
+  async update(id: string, updates: ProfileUpdate) {
+    return withRetry(async () => {
+      const supabase = createClient()
+      const { data, error } = await supabase
+        .from('profiles')
+        .update(updates)
+        .eq('id', id)
+        .select()
+        .single()
+
+      if (error) throw handleSupabaseError(error)
+      return data
+    })
+  },
+
+  // Delete customer (cascade will handle related data)
+  async delete(id: string) {
+    return withRetry(async () => {
+      const supabase = createClient()
+      // Delete from auth.users will cascade to profiles
+      // Note: This requires service role key or admin privileges
+      const { error } = await supabase.auth.admin.deleteUser(id)
+      
+      if (error) throw handleSupabaseError(error)
+    })
+  },
+}
