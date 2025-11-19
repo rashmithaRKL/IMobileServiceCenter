@@ -10,6 +10,8 @@ import ProductImageGallery from "@/components/product-image-gallery"
 import ProductReviews from "@/components/product-reviews"
 import SimilarProducts from "@/components/similar-products"
 
+export const runtime = "edge"
+
 const ALL_PRODUCTS = [
   {
     id: "1",

@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
+export const runtime = 'edge'
+
 export async function POST(req: Request) {
 	const cookieStore = await cookies()
 	let response = NextResponse.json({ ok: true })

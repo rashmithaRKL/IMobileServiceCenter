@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server'
+export const runtime = 'edge'
+
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
