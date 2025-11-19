@@ -9,7 +9,7 @@ importers:
   .:
     dependencies:
       '@emotion/is-prop-valid':
-        specifier: latest
+        specifier: 1.4.0
         version: 1.4.0
       '@hcaptcha/react-hcaptcha':
         specifier: ^1.14.0
@@ -78,7 +78,7 @@ importers:
         specifier: 1.2.2
         version: 1.2.2(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/react-slot':
-        specifier: latest
+        specifier: 1.2.4
         version: 1.2.4(@types/react@19.2.6)(react@18.3.1)
       '@radix-ui/react-switch':
         specifier: 1.1.2
@@ -105,7 +105,7 @@ importers:
         specifier: ^2.39.0
         version: 2.83.0
       '@vercel/analytics':
-        specifier: latest
+        specifier: 1.5.0
         version: 1.5.0(next@15.2.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       autoprefixer:
         specifier: ^10.4.20
@@ -126,10 +126,10 @@ importers:
         specifier: 8.5.1
         version: 8.5.1(react@18.3.1)
       framer-motion:
-        specifier: latest
+        specifier: 12.23.24
         version: 12.23.24(@emotion/is-prop-valid@1.4.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       immer:
-        specifier: latest
+        specifier: 10.2.0
         version: 10.2.0
       input-otp:
         specifier: 1.4.1
@@ -144,7 +144,7 @@ importers:
         specifier: 15.2.4
         version: 15.2.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       next-themes:
-        specifier: latest
+        specifier: 0.4.6
         version: 0.4.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react:
         specifier: ^18.3.1
@@ -162,7 +162,7 @@ importers:
         specifier: ^2.1.7
         version: 2.1.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       recharts:
-        specifier: latest
+        specifier: 3.4.1
         version: 3.4.1(@types/react@19.2.6)(react-dom@18.3.1(react@18.3.1))(react-is@19.2.0)(react@18.3.1)(redux@5.0.1)
       sonner:
         specifier: ^1.7.4
@@ -174,7 +174,7 @@ importers:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@4.1.17)
       use-sync-external-store:
-        specifier: latest
+        specifier: 1.6.0
         version: 1.6.0(react@18.3.1)
       vaul:
         specifier: ^0.9.9
@@ -183,7 +183,7 @@ importers:
         specifier: 3.25.76
         version: 3.25.76
       zustand:
-        specifier: latest
+        specifier: 5.0.8
         version: 5.0.8(@types/react@19.2.6)(immer@10.2.0)(react@18.3.1)(use-sync-external-store@1.6.0(react@18.3.1))
     devDependencies:
       '@tailwindcss/postcss':
